@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Mahasiswa;
 use App\Models\Kelas;
 use PDF;
+use App\Models\Oracle;
 class MahasiswaController extends Controller
 {
     /**
@@ -13,6 +14,31 @@ class MahasiswaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function oracle()
+    {
+        $data = new Oracle;
+        return $data;
+    }
+
+     public function uploadFile(Request $request,$oke)
+    {
+            $result ='';
+            $file = $request->file($oke);
+            $name = $file->getClientOriginalName();
+            // $tmp_name = $file['tmp_name'];
+
+            $extension = explode('.',$name);
+            $extension = strtolower(end($extension));
+
+            $key = rand().'-'.$oke;
+            $tmp_file_name = "{$key}.{$extension}";
+            $tmp_file_path = "admin/images/mahasiswa/";
+            $file->move($tmp_file_path,$tmp_file_name);
+
+            $result = 'admin/images/mahasiswa'.'/'.$tmp_file_name;
+        return $result;
+    }
+
     public function index()
     {
         $mahasiswa=Mahasiswa::with('kelas')->get(); 
@@ -48,11 +74,14 @@ class MahasiswaController extends Controller
         ,'email'=>'required'
         ,'tanggal_lahir'=>'required'
         ]);//fungsieloquentuntukmenambahdata
-        $image = $request->file('foto');
-        if($image)
-        {
-           $image_name = $request->file('foto')->store('images','public');
-        }
+       // $image = $request->file('foto');
+        $foto = $this->uploadFile($request,'foto');
+        $file_name = $foto;
+        $upOracle = $this->oracle()->upFileOracle($file_name);
+        // if($image)
+        // {
+        //    $image_name = $request->file('foto')->store('images','public');
+        // }
        Mahasiswa::create([
 
        'nim'=>$request->nim
@@ -62,7 +91,7 @@ class MahasiswaController extends Controller
        ,'no_handphone'=>$request->no_handphone
        ,'email'=>$request->email
        ,'tanggal_lahir'=>$request->tanggal_lahir
-       ,'foto'=>$image_name
+       ,'foto'=>$upOracle['message']
 
        ]);
         //jikadataberhasilditambahkan,akankembalikehalamanutama

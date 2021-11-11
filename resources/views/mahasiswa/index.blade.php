@@ -47,7 +47,7 @@ cari
 	
 		<td>{{$mahasiswa->nim}}</td>
 		<td>{{$mahasiswa->nama}}</td>
-		<td><img width="100px" height="100px" src="{{asset('storage/'.$mahasiswa->foto)}}"></td>
+		<td><img width="100px" height="100px" src="{{$mahasiswa->foto}}"></td>
 		<td>{{$mahasiswa->kelas->nama_kelas}}</td>
 		<td>{{$mahasiswa->jurusan}}</td>
 		<td>{{$mahasiswa->no_handphone}}</td>
